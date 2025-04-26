@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
 import GremlinGenerator from '../components/GremlinGenerator';
 import TrapStreetsGame from '../components/TrapStreetsGame';
 import GremlinGauntletGame from '../components/GremlinGauntletGame';
