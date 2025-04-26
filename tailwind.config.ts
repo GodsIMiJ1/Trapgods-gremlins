@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -17,7 +16,13 @@ export default {
       },
       animation: {
         "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-      }
+      },
+      boxShadow: {
+        'glow': '0 0 15px 5px currentColor',
+      },
+      scale: {
+        '103': '1.03',
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
