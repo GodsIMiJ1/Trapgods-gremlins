@@ -7,45 +7,58 @@ import TrapStreetsGame from '../components/TrapStreetsGame';
 import GremlinGauntletGame from '../components/GremlinGauntletGame';
 import TrapBossBattle from '../components/TrapBossBattle';
 
+type GameStage = 'start' | 'generateGremlin' | 'trapStreets' | 'gremlinGauntlet' | 'trapBossBattle' | 'gameOver';
+
 const GamePage = () => {
   const navigate = useNavigate();
-  const [stage, setStage] = useState(0);
-  const [gremlin, setGremlin] = useState(null);
-  const [trapStreetsCompleted, setTrapStreetsCompleted] = useState(false);
+  const [stage, setStage] = useState<GameStage>('generateGremlin');
+  const [gremlin, setGremlin] = useState<any>(null);
 
   const handleGremlinGenerated = (newGremlin: any) => {
     setGremlin(newGremlin);
-    setStage(1);
+    setStage('trapStreets');
   };
 
-  const handleTrapStreetsComplete = (won: boolean) => {
-    if (won) {
-      setTrapStreetsCompleted(true);
+  const handleStageComplete = (won: boolean) => {
+    if (!won) {
+      navigate('/end', { state: { won: false } });
+      return;
     }
-  };
 
-  const handleContinueToGauntlet = () => {
-    setStage(2);
-  };
-
-  const nextStage = () => {
-    if (stage < 3) {
-      setStage(stage + 1);
-    } else {
-      navigate('/end', { state: { won: Math.random() > 0.5 } });
+    // Progress to next stage based on current stage
+    switch (stage) {
+      case 'trapStreets':
+        setStage('gremlinGauntlet');
+        break;
+      case 'gremlinGauntlet':
+        setStage('trapBossBattle');
+        break;
+      case 'trapBossBattle':
+        navigate('/end', { state: { won: true } });
+        break;
+      default:
+        break;
     }
   };
 
   const renderCurrentStage = () => {
     switch (stage) {
-      case 0:
+      case 'generateGremlin':
         return <GremlinGenerator onGenerate={handleGremlinGenerated} />;
-      case 1:
-        return <TrapStreetsGame onComplete={handleTrapStreetsComplete} />;
-      case 2:
-        return <GremlinGauntletGame />;
-      case 3:
-        return <TrapBossBattle />;
+      case 'trapStreets':
+        return <TrapStreetsGame onComplete={handleStageComplete} />;
+      case 'gremlinGauntlet':
+        return (
+          <GremlinGauntletGame 
+            onComplete={(won) => handleStageComplete(won)}
+          />
+        );
+      case 'trapBossBattle':
+        return (
+          <TrapBossBattle 
+            onFinishGame={() => handleStageComplete(true)}
+          />
+        );
       default:
         return null;
     }
@@ -69,14 +82,6 @@ const GamePage = () => {
         <div className="mb-8">
           {renderCurrentStage()}
         </div>
-        {((stage === 1 && trapStreetsCompleted) || stage > 1) && (
-          <Button
-            onClick={stage === 1 ? handleContinueToGauntlet : nextStage}
-            className="bg-neon-purple hover:bg-neon-purple/80 text-white font-pixel px-8 py-4"
-          >
-            {stage === 1 ? 'Continue to Gremlin Gauntlet' : 'Next Stage'}
-          </Button>
-        )}
       </div>
     </div>
   );
