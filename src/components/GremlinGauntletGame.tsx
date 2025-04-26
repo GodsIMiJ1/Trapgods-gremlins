@@ -17,7 +17,8 @@ const GremlinGauntletGame = () => {
   const [activeColor, setActiveColor] = useState<Color | null>(null);
   const [message, setMessage] = useState('Click Start!');
 
-  const timeoutRef = useRef<number[]>([]);
+  // Update the type to accept NodeJS.Timeout
+  const timeoutRef = useRef<NodeJS.Timeout[]>([]);
 
   const clearAllTimeouts = () => {
     timeoutRef.current.forEach(clearTimeout);
