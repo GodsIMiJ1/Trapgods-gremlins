@@ -11,24 +11,43 @@ const GamePage = () => {
   const navigate = useNavigate();
   const [stage, setStage] = useState(0);
   const [gremlin, setGremlin] = useState(null);
+  const [trapStreetsCompleted, setTrapStreetsCompleted] = useState(false);
 
   const handleGremlinGenerated = (newGremlin: any) => {
     setGremlin(newGremlin);
     setStage(1);
   };
 
-  const stages = [
-    <GremlinGenerator onGenerate={handleGremlinGenerated} />,
-    <TrapStreetsGame />,
-    <GremlinGauntletGame />,
-    <TrapBossBattle />
-  ];
+  const handleTrapStreetsComplete = (won: boolean) => {
+    if (won) {
+      setTrapStreetsCompleted(true);
+    }
+  };
+
+  const handleContinueToGauntlet = () => {
+    setStage(2);
+  };
 
   const nextStage = () => {
-    if (stage < stages.length - 1) {
+    if (stage < 3) {
       setStage(stage + 1);
     } else {
       navigate('/end', { state: { won: Math.random() > 0.5 } });
+    }
+  };
+
+  const renderCurrentStage = () => {
+    switch (stage) {
+      case 0:
+        return <GremlinGenerator onGenerate={handleGremlinGenerated} />;
+      case 1:
+        return <TrapStreetsGame onComplete={handleTrapStreetsComplete} />;
+      case 2:
+        return <GremlinGauntletGame />;
+      case 3:
+        return <TrapBossBattle />;
+      default:
+        return null;
     }
   };
 
@@ -48,14 +67,14 @@ const GamePage = () => {
           </div>
         )}
         <div className="mb-8">
-          {stages[stage]}
+          {renderCurrentStage()}
         </div>
-        {stage > 0 && (
+        {((stage === 1 && trapStreetsCompleted) || stage > 1) && (
           <Button
-            onClick={nextStage}
+            onClick={stage === 1 ? handleContinueToGauntlet : nextStage}
             className="bg-neon-purple hover:bg-neon-purple/80 text-white font-pixel px-8 py-4"
           >
-            Next Stage
+            {stage === 1 ? 'Continue to Gremlin Gauntlet' : 'Next Stage'}
           </Button>
         )}
       </div>
