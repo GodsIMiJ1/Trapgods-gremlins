@@ -9,7 +9,11 @@ const PAUSE_DURATION = 250;
 type Color = typeof COLORS[number];
 type GameStatus = 'idle' | 'starting' | 'showingSequence' | 'playerTurn' | 'roundComplete' | 'gameOver' | 'gameWon';
 
-const GremlinGauntletGame = () => {
+interface GremlinGauntletGameProps {
+  onComplete?: (won: boolean) => void;
+}
+
+const GremlinGauntletGame: React.FC<GremlinGauntletGameProps> = ({ onComplete }) => {
   const [sequence, setSequence] = useState<Color[]>([]);
   const [playerSequence, setPlayerSequence] = useState<Color[]>([]);
   const [currentRound, setCurrentRound] = useState(0);
@@ -94,6 +98,10 @@ const GremlinGauntletGame = () => {
           setGameStatus('gameWon');
           setMessage(`Gauntlet Conquered! (Round ${currentRound} completed)`);
           clearAllTimeouts();
+          // Call onComplete if provided when player wins
+          if (onComplete) {
+            onComplete(true);
+          }
         } else {
           setGameStatus('roundComplete');
           setMessage('Correct! Next round...');
@@ -107,6 +115,10 @@ const GremlinGauntletGame = () => {
       setGameStatus('gameOver');
       setMessage(`Wrong! Game Over. (Reached Round ${currentRound})`);
       clearAllTimeouts();
+      // Call onComplete if provided when player loses
+      if (onComplete) {
+        onComplete(false);
+      }
     }
   };
 
