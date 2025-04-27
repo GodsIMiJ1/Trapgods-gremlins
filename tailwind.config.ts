@@ -8,14 +8,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "#1A1F2C",
-        "neon-purple": "#9d00ff",
+        background: "#020202",
         "neon-green": "#39ff14",
         "neon-pink": "#ff00ff",
+        "neon-purple": "#9d00ff",
         "dark-surface": "#1a1a1a",
       },
       fontFamily: {
         pixel: ['"Press Start 2P"', 'cursive'],
+        glitch: ['"VT323"', 'monospace'],
       },
       animation: {
         "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
@@ -30,7 +31,7 @@ export default {
       },
       boxShadow: {
         'glow': '0 0 15px 5px currentColor',
-        'neon': '0 0 5px theme("colors.neon-purple"), 0 0 20px theme("colors.neon-purple")',
+        'neon': '0 0 5px theme("colors.neon-green"), 0 0 20px theme("colors.neon-purple")',
       },
       scale: {
         '103': '1.03',
