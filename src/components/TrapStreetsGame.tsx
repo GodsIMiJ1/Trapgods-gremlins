@@ -69,7 +69,7 @@ const TrapStreetsGame: React.FC<TrapStreetsGameProps> = ({ onComplete }) => {
       <div className="flex flex-col items-center gap-4">
         <canvas
           ref={canvasRef}
-          className="border border-neon-purple/30 bg-dark-background rounded"
+          className="border border-neon-purple bg-dark-surface/80 rounded"
         />
         {!isRunning && (
           <Button 

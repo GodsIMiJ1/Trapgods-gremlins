@@ -1,3 +1,4 @@
+
 /**
  * Initializes and runs the Trap Streets game on the provided canvas.
  * @param {HTMLCanvasElement} canvas - The canvas element to draw the game on.
@@ -19,15 +20,21 @@ export function startGame(canvas, onGameOver, onScoreUpdate) {
     const PLAYER_WIDTH = 30;
     const PLAYER_HEIGHT = 30;
     const PLAYER_SPEED = 5;
-    const PLAYER_COLOR = 'blue'; // Gremlin representation
+    const PLAYER_COLOR = '#39ff14'; // Bright neon green for player visibility
+    const PLAYER_BORDER = '#ffffff'; // White border for contrast
 
     const OBSTACLE_WIDTH = 40;
     const OBSTACLE_HEIGHT = 20;
     const OBSTACLE_SPEED = 3;
-    const OBSTACLE_COLOR = 'red'; // Roast Fail representation
+    const OBSTACLE_COLOR = '#ff00ff'; // Neon pink for obstacles
+    const OBSTACLE_BORDER = '#ffffff'; // White border for contrast
     const OBSTACLE_SPAWN_RATE = 1000; // Milliseconds between spawns
 
     const WIN_TIME_SECONDS = 30;
+    
+    // Canvas background
+    ctx.fillStyle = '#1a1a1a'; // Slightly lighter than black for better contrast
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // --- Game State ---
     let player = {
@@ -139,23 +146,34 @@ export function startGame(canvas, onGameOver, onScoreUpdate) {
     }
 
     function drawPlayer() {
+        // Draw player with bright neon color and border for better visibility
         ctx.fillStyle = PLAYER_COLOR;
         ctx.fillRect(player.x, player.y, player.width, player.height);
+        
+        // Add border for better visibility
+        ctx.strokeStyle = PLAYER_BORDER;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(player.x, player.y, player.width, player.height);
     }
 
     function drawObstacles() {
         ctx.fillStyle = OBSTACLE_COLOR;
         obstacles.forEach(obstacle => {
             ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            
+            // Add border for better visibility
+            ctx.strokeStyle = OBSTACLE_BORDER;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
         });
     }
 
     function drawGameOver() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
         ctx.fillRect(0, 0, canvas.width, canvas.height); // Dim background
 
         ctx.font = '40px Arial';
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = '#39ff14'; // Neon green
         ctx.textAlign = 'center';
         if (gameWon) {
             ctx.fillText('YOU WIN!', canvas.width / 2, canvas.height / 2 - 20);
@@ -181,6 +199,30 @@ export function startGame(canvas, onGameOver, onScoreUpdate) {
 
         // 1. Clear Canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw background
+        ctx.fillStyle = '#1a1a1a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw grid lines for visual reference
+        ctx.strokeStyle = '#333333';
+        ctx.lineWidth = 1;
+        
+        // Vertical grid lines
+        for (let x = 0; x <= canvas.width; x += 50) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, canvas.height);
+            ctx.stroke();
+        }
+        
+        // Horizontal grid lines
+        for (let y = 0; y <= canvas.height; y += 50) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+            ctx.stroke();
+        }
 
         // 2. Update State
         updatePlayer();
