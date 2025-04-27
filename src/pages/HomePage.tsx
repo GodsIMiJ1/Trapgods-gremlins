@@ -28,7 +28,7 @@ const HomePage = () => {
       </div>
       
       <h1 className="text-4xl md:text-6xl font-pixel text-neon-green mb-4 glitch-text animate-pulse-slow">
-        LiL LiL da TrapGod's
+        TrapGods
       </h1>
       <h2 className="text-3xl md:text-5xl font-glitch text-neon-pink mb-12">
         GREMLINS
@@ -49,4 +49,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
