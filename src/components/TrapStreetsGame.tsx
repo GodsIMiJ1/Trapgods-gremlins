@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useGameLoop } from '../hooks/useGameLoop';
 import { Button } from "@/components/ui/button";
@@ -15,13 +16,7 @@ const TrapStreetsGame: React.FC<TrapStreetsGameProps> = ({ onComplete }) => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
 
-  const { updateGameState, getGameState, resetGame } = useGameLoop({
-    canvasWidth: 600,
-    canvasHeight: 400,
-    onGameOver: handleGameOver,
-    onScoreUpdate: handleScoreUpdate,
-  });
-
+  // Define callback functions before using them
   const handleScoreUpdate = useCallback((newScore: number, newTimeLeft: number) => {
     setScore(newScore);
     setTimeLeft(Math.max(0, newTimeLeft));
@@ -33,6 +28,14 @@ const TrapStreetsGame: React.FC<TrapStreetsGameProps> = ({ onComplete }) => {
     setIsRunning(false);
     onComplete(won);
   }, [onComplete]);
+
+  // Now use the callbacks in useGameLoop
+  const { updateGameState, getGameState, resetGame } = useGameLoop({
+    canvasWidth: 600,
+    canvasHeight: 400,
+    onGameOver: handleGameOver,
+    onScoreUpdate: handleScoreUpdate,
+  });
 
   useEffect(() => {
     const canvas = canvasRef.current;
