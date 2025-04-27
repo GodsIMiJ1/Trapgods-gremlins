@@ -1,8 +1,7 @@
 
-import { GAME, OBSTACLE } from './game/constants';
-import { createPlayer, updatePlayer, drawPlayer, type Player } from './game/player';
-import { spawnObstacle, updateObstacles, checkCollisions, drawObstacles, type Obstacle } from './game/obstacles';
 import { clearCanvas, drawGameOver } from './game/renderer';
+import { drawPlayer } from './game/player';
+import { drawObstacles } from './game/obstacles';
 
 export function startGame(
   canvas: HTMLCanvasElement,
@@ -20,82 +19,32 @@ export function startGame(
     return null;
   }
 
-  let player = createPlayer(canvas.width, canvas.height);
-  let obstacles: Obstacle[] = [];
-  let score = 0;
-  let startTime = Date.now();
-  let lastObstacleSpawnTime = startTime;
-  let gameOver = false;
-  let gameWon = false;
   let animationFrameId: number | null = null;
-  let keysPressed: Record<string, boolean> = {};
-
-  const handleKeyDown = (event: KeyboardEvent) => {
-    keysPressed[event.key] = true;
-  };
-
-  const handleKeyUp = (event: KeyboardEvent) => {
-    keysPressed[event.key] = false;
-  };
-
-  window.addEventListener('keydown', handleKeyDown);
-  window.addEventListener('keyup', handleKeyUp);
 
   function gameLoop() {
-    if (gameOver) {
-      drawGameOver(ctx, canvas.width, canvas.height, gameWon, score);
-      onGameOver(gameWon, score);
-      cleanup();
-      return;
-    }
-
     // Clear and prepare canvas
     clearCanvas(ctx, canvas.width, canvas.height);
 
-    // Update game state
-    updatePlayer(player, keysPressed, canvas.width);
+    // Get current game state and draw
+    const gameState = getGameState();
+    drawPlayer(ctx, gameState.player);
+    drawObstacles(ctx, gameState.obstacles);
 
-    // Handle obstacles
-    const currentTime = Date.now();
-    if (currentTime - lastObstacleSpawnTime > OBSTACLE.SPAWN_RATE) {
-      obstacles.push(spawnObstacle(canvas.width));
-      lastObstacleSpawnTime = currentTime;
+    // Update game state and continue loop if game is not over
+    if (updateGameState()) {
+      animationFrameId = requestAnimationFrame(gameLoop);
+    } else {
+      drawGameOver(ctx, canvas.width, canvas.height, gameState.gameWon, gameState.score);
     }
-    obstacles = updateObstacles(obstacles, canvas.height);
-
-    // Check win/lose conditions
-    if (checkCollisions(player, obstacles)) {
-      gameOver = true;
-      gameWon = false;
-    }
-
-    const elapsedTimeSeconds = Math.floor((currentTime - startTime) / 1000);
-    score = elapsedTimeSeconds;
-    onScoreUpdate(score, GAME.WIN_TIME_SECONDS - elapsedTimeSeconds);
-
-    if (!gameOver && elapsedTimeSeconds >= GAME.WIN_TIME_SECONDS) {
-      gameWon = true;
-      gameOver = true;
-    }
-
-    // Draw game elements
-    drawPlayer(ctx, player);
-    drawObstacles(ctx, obstacles);
-
-    // Continue game loop
-    animationFrameId = requestAnimationFrame(gameLoop);
   }
 
   function cleanup() {
     if (animationFrameId) {
       cancelAnimationFrame(animationFrameId);
     }
-    window.removeEventListener('keydown', handleKeyDown);
-    window.removeEventListener('keyup', handleKeyUp);
-    console.log("Game cleanup complete.");
   }
 
-  // Start the game
+  // Start the game loop
   console.log("Starting Trap Streets game...");
   animationFrameId = requestAnimationFrame(gameLoop);
 

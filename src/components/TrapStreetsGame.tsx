@@ -1,7 +1,7 @@
-
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { startGame } from '../utils/trapStreetsGame';
+import { useGameLoop } from '../hooks/useGameLoop';
 import { Button } from "@/components/ui/button";
+import { startGame } from '../utils/trapStreetsGame';
 
 interface TrapStreetsGameProps {
   onComplete: (won: boolean) => void;
@@ -15,6 +15,13 @@ const TrapStreetsGame: React.FC<TrapStreetsGameProps> = ({ onComplete }) => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
 
+  const { updateGameState, getGameState, resetGame } = useGameLoop({
+    canvasWidth: 600,
+    canvasHeight: 400,
+    onGameOver: handleGameOver,
+    onScoreUpdate: handleScoreUpdate,
+  });
+
   const handleScoreUpdate = useCallback((newScore: number, newTimeLeft: number) => {
     setScore(newScore);
     setTimeLeft(Math.max(0, newTimeLeft));
@@ -26,23 +33,6 @@ const TrapStreetsGame: React.FC<TrapStreetsGameProps> = ({ onComplete }) => {
     setIsRunning(false);
     onComplete(won);
   }, [onComplete]);
-
-  const startNewGame = () => {
-    if (gameCleanupRef.current) {
-      gameCleanupRef.current();
-      gameCleanupRef.current = null;
-    }
-
-    const canvas = canvasRef.current;
-    if (canvas) {
-      setIsGameOver(false);
-      setScore(0);
-      setTimeLeft(30);
-      setIsRunning(true);
-
-      gameCleanupRef.current = startGame(canvas, handleGameOver, handleScoreUpdate);
-    }
-  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -58,6 +48,23 @@ const TrapStreetsGame: React.FC<TrapStreetsGameProps> = ({ onComplete }) => {
       }
     };
   }, [handleGameOver, handleScoreUpdate]);
+
+  const startNewGame = () => {
+    if (gameCleanupRef.current) {
+      gameCleanupRef.current();
+      gameCleanupRef.current = null;
+    }
+
+    const canvas = canvasRef.current;
+    if (canvas) {
+      setIsGameOver(false);
+      setScore(0);
+      setTimeLeft(30);
+      setIsRunning(true);
+      resetGame();
+      gameCleanupRef.current = startGame(canvas, handleGameOver, handleScoreUpdate);
+    }
+  };
 
   return (
     <div className="glass-card p-8 rounded-lg">
