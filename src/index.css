@@ -6,6 +6,14 @@
 @layer base {
   body {
     @apply bg-background text-white antialiased;
+    background-image: 
+      linear-gradient(to bottom, rgba(157, 0, 255, 0.1) 1px, transparent 1px),
+      linear-gradient(to right, rgba(157, 0, 255, 0.1) 1px, transparent 1px);
+    background-size: 35px 35px;
+  }
+
+  ::selection {
+    @apply bg-neon-purple/30 text-neon-green;
   }
 }
 

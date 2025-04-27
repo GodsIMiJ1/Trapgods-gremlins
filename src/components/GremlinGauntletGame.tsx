@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 const COLORS = ['red', 'blue', 'green', 'yellow'] as const;
 const ROUNDS_TO_WIN = 5;
@@ -20,8 +19,6 @@ const GremlinGauntletGame: React.FC<GremlinGauntletGameProps> = ({ onComplete })
   const [gameStatus, setGameStatus] = useState<GameStatus>('idle');
   const [activeColor, setActiveColor] = useState<Color | null>(null);
   const [message, setMessage] = useState('Click Start!');
-
-  // Update the type to accept NodeJS.Timeout
   const timeoutRef = useRef<NodeJS.Timeout[]>([]);
 
   const clearAllTimeouts = () => {
@@ -98,7 +95,6 @@ const GremlinGauntletGame: React.FC<GremlinGauntletGameProps> = ({ onComplete })
           setGameStatus('gameWon');
           setMessage(`Gauntlet Conquered! (Round ${currentRound} completed)`);
           clearAllTimeouts();
-          // Call onComplete if provided when player wins
           if (onComplete) {
             onComplete(true);
           }
@@ -115,7 +111,6 @@ const GremlinGauntletGame: React.FC<GremlinGauntletGameProps> = ({ onComplete })
       setGameStatus('gameOver');
       setMessage(`Wrong! Game Over. (Reached Round ${currentRound})`);
       clearAllTimeouts();
-      // Call onComplete if provided when player loses
       if (onComplete) {
         onComplete(false);
       }
@@ -141,9 +136,15 @@ const GremlinGauntletGame: React.FC<GremlinGauntletGameProps> = ({ onComplete })
   const isGameInProgress = gameStatus !== 'idle' && gameStatus !== 'gameOver' && gameStatus !== 'gameWon';
 
   return (
-    <div className="bg-background/50 backdrop-blur-lg p-8 rounded-lg border border-neon-purple/30">
-      <h2 className="text-2xl font-pixel text-neon-purple mb-4">Gremlin Gauntlet</h2>
-      <div className={`mb-4 text-center ${gameStatus === 'gameWon' ? 'text-green-500' : ''} ${gameStatus === 'gameOver' ? 'text-red-500' : 'text-neon-green'}`}>
+    <div className="relative bg-dark-surface/50 backdrop-blur-lg p-8 rounded-lg border border-neon-purple animate-pulse-slow">
+      <div className="absolute top-4 right-4 opacity-10 text-4xl font-pixel text-neon-purple">
+        👁️
+      </div>
+      <div className="absolute bottom-2 right-2 opacity-5 text-sm font-pixel text-neon-green">
+        NODE
+      </div>
+      <h2 className="text-2xl font-pixel text-neon-purple mb-4 animate-glitch">Gremlin Gauntlet</h2>
+      <div className={`mb-4 text-center font-pixel ${gameStatus === 'gameWon' ? 'text-neon-green' : ''} ${gameStatus === 'gameOver' ? 'text-neon-pink' : 'text-neon-green'}`}>
         {message}
       </div>
 
@@ -153,13 +154,13 @@ const GremlinGauntletGame: React.FC<GremlinGauntletGameProps> = ({ onComplete })
             key={color}
             onClick={() => handlePlayerClick(color)}
             className={`
-              w-24 h-24 rounded-lg cursor-pointer transition-all duration-200
-              ${color === 'red' ? 'bg-red-500' : ''}
-              ${color === 'blue' ? 'bg-blue-500' : ''}
-              ${color === 'green' ? 'bg-green-500' : ''}
-              ${color === 'yellow' ? 'bg-yellow-500' : ''}
+              w-24 h-24 rounded-lg cursor-pointer transition-all duration-200 border border-neon-purple
+              ${color === 'red' ? 'bg-red-500/50' : ''}
+              ${color === 'blue' ? 'bg-blue-500/50' : ''}
+              ${color === 'green' ? 'bg-green-500/50' : ''}
+              ${color === 'yellow' ? 'bg-yellow-500/50' : ''}
               ${activeColor === color ? 'scale-105 opacity-100 shadow-glow' : 'opacity-70'}
-              ${isPlayerInteractionDisabled ? 'cursor-not-allowed opacity-40' : 'hover:opacity-85 hover:scale-103'}
+              ${isPlayerInteractionDisabled ? 'cursor-not-allowed opacity-40' : 'hover:opacity-85 hover:scale-103 hover:shadow-neon'}
             `}
             role="button"
             aria-disabled={isPlayerInteractionDisabled}
@@ -171,16 +172,21 @@ const GremlinGauntletGame: React.FC<GremlinGauntletGameProps> = ({ onComplete })
         <button
           onClick={startGame}
           disabled={isGameInProgress}
-          className="bg-neon-purple hover:bg-neon-purple/80 text-white font-pixel px-8 py-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-dark-surface hover:bg-dark-surface/80 text-neon-purple font-pixel px-8 py-4 rounded 
+                   border border-neon-purple transition-all duration-300 
+                   disabled:opacity-50 disabled:cursor-not-allowed
+                   hover:shadow-neon hover:scale-103 hover:rotate-1"
         >
           {currentRound > 0 || gameStatus === 'gameOver' || gameStatus === 'gameWon' ? 'Restart Game' : 'Start Game'}
         </button>
         {currentRound > 0 && (
-          <p className="mt-4 text-neon-green">
+          <p className="mt-4 text-neon-green font-pixel">
             Round: {currentRound} / {ROUNDS_TO_WIN}
           </p>
         )}
       </div>
+
+      <div className="absolute inset-0 pointer-events-none bg-[url('data:image/svg+xml,...')] opacity-5 mix-blend-overlay"></div>
     </div>
   );
 };
