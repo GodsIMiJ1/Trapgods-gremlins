@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -5,19 +6,16 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+        default: "bg-dark-surface border border-neon-green text-neon-green hover:shadow-glow hover:shadow-neon-green hover:scale-103 hover:-translate-y-0.5 transition-all",
+        destructive: "bg-dark-surface border border-neon-pink text-neon-pink hover:shadow-glow hover:shadow-neon-pink hover:scale-103 hover:-translate-y-0.5 transition-all",
+        outline: "border border-neon-purple bg-dark-surface text-neon-purple hover:shadow-glow hover:shadow-neon-purple hover:scale-103 hover:-translate-y-0.5 transition-all",
+        secondary: "bg-dark-surface border border-neon-purple text-neon-purple hover:shadow-glow hover:shadow-neon-purple hover:scale-103 hover:-translate-y-0.5 transition-all",
+        ghost: "text-neon-green hover:bg-dark-surface hover:text-neon-green hover:scale-103 transition-all",
+        link: "text-neon-green underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2",

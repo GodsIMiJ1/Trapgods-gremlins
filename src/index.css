@@ -5,10 +5,10 @@
 
 @layer base {
   body {
-    @apply bg-[#020202] text-white antialiased;
+    @apply bg-background text-neon-green antialiased;
     background-image: 
-      linear-gradient(rgba(57, 255, 20, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(57, 255, 20, 0.05) 1px, transparent 1px);
+      linear-gradient(rgba(57, 255, 20, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(57, 255, 20, 0.03) 1px, transparent 1px);
     background-size: 35px 35px;
     position: relative;
     overflow-x: hidden;
@@ -29,17 +29,42 @@
     z-index: 1000;
   }
 
+  body::after {
+    content: 'NODE';
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-family: 'Press Start 2P', cursive;
+    color: rgba(57, 255, 20, 0.1);
+    font-size: 24px;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* Eye of Kai symbol in top corner */
+  #root::before {
+    content: '👁️';
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    opacity: 0.15;
+    filter: drop-shadow(0 0 5px rgba(255, 0, 255, 0.5));
+    z-index: 999;
+    pointer-events: none;
+  }
+
   ::selection {
-    @apply bg-[#39ff14]/30 text-[#ff00ff];
+    @apply bg-neon-purple/30 text-neon-pink;
   }
 }
 
 .glass-card {
-  @apply backdrop-blur-lg bg-black/10 border border-[#9d00ff]/20 shadow-[0_4px_12px_-2px_rgba(57,255,20,0.1)];
+  @apply backdrop-blur-lg bg-black/20 border border-neon-purple/20 shadow-[0_4px_12px_-2px_rgba(157,0,255,0.15)];
 }
 
 .glitch-text {
-  @apply text-[#39ff14] animate-pulse-slow;
+  @apply font-pixel text-neon-green animate-pulse-slow;
   text-shadow: 
     0.05em 0 0 rgba(255, 0, 255, 0.75),
     -0.05em -0.025em 0 rgba(57, 255, 20, 0.75),
@@ -90,4 +115,28 @@
       0.025em -0.05em 0 rgba(57, 255, 20, 0.75),
       -0.05em -0.025em 0 rgba(157, 0, 255, 0.75);
   }
+}
+
+.neon-green-text {
+  @apply text-neon-green;
+}
+
+.neon-pink-text {
+  @apply text-neon-pink;
+}
+
+.neon-purple-text {
+  @apply text-neon-purple;
+}
+
+.cyber-blue-text {
+  @apply text-cyber-blue;
+}
+
+.cyberpunk-border {
+  @apply border border-neon-purple/50 shadow-[0_0_8px_rgba(157,0,255,0.5)];
+}
+
+.glitch-hover {
+  @apply hover:scale-103 hover:-translate-y-0.5 transition-all hover:animate-glitch;
 }

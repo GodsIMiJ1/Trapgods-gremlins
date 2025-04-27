@@ -68,14 +68,14 @@ const GamePage = () => {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-4xl mx-auto">
         {gremlin && (
-          <div className="mb-8 p-4 bg-background/50 backdrop-blur-lg rounded-lg border border-neon-purple/30">
-            <h2 className="text-neon-purple font-pixel mb-4">Your Gremlin</h2>
-            <div className="grid grid-cols-2 gap-4 text-neon-green">
-              <p>Name: {gremlin.name}</p>
-              <p>Class: {gremlin.class}</p>
-              <p>Wit: {gremlin.wit}</p>
-              <p>Trap Energy: {gremlin.trapEnergy}</p>
-              <p>Luck: {gremlin.luck}</p>
+          <div className="mb-8 p-4 glass-card rounded-lg">
+            <h2 className="text-neon-purple font-pixel mb-4">// GREMLIN_PROFILE.dat</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <p className="font-glitch text-neon-green">NAME: <span className="text-cyber-blue">{gremlin.name}</span></p>
+              <p className="font-glitch text-neon-green">CLASS: <span className="text-neon-pink">{gremlin.class}</span></p>
+              <p className="font-glitch text-neon-green">WIT: <span className="text-cyber-blue">{gremlin.wit}</span></p>
+              <p className="font-glitch text-neon-green">TRAP_ENERGY: <span className="text-cyber-blue">{gremlin.trapEnergy}</span></p>
+              <p className="font-glitch text-neon-green">LUCK: <span className="text-cyber-blue">{gremlin.luck}</span></p>
             </div>
           </div>
         )}

@@ -60,28 +60,28 @@ const TrapStreetsGame: React.FC<TrapStreetsGameProps> = ({ onComplete }) => {
   }, [handleGameOver, handleScoreUpdate]);
 
   return (
-    <div className="bg-background/50 backdrop-blur-lg p-8 rounded-lg border border-neon-purple/30">
-      <h2 className="text-2xl font-pixel text-neon-purple mb-4">Trap Streets</h2>
-      <div className="flex justify-between mb-4 text-neon-green">
-        <span>Score: {score}</span>
-        {!isGameOver && isRunning && <span>Time Left: {timeLeft}s</span>}
+    <div className="glass-card p-8 rounded-lg">
+      <h2 className="text-2xl font-pixel text-neon-green mb-4">// TRAP_STREETS.exe</h2>
+      <div className="flex justify-between mb-4">
+        <span className="font-glitch text-neon-pink">SCORE: {score}</span>
+        {!isGameOver && isRunning && <span className="font-glitch text-cyber-blue">TIME: {timeLeft}s</span>}
       </div>
       <div className="flex flex-col items-center gap-4">
         <canvas
           ref={canvasRef}
-          className="border border-neon-purple/30 bg-background"
+          className="border border-neon-purple/30 bg-dark-background rounded"
         />
         {!isRunning && (
           <Button 
             onClick={startNewGame} 
             disabled={isRunning}
-            className="bg-neon-purple hover:bg-neon-purple/80 text-white font-pixel"
+            className="mt-4 font-pixel"
           >
-            {isGameOver ? 'Try Again' : 'Start Game'}
+            {isGameOver ? 'RETRY.exe' : 'LAUNCH.exe'}
           </Button>
         )}
-        <p className="text-neon-green text-sm">
-          Use Left/Right Arrow keys to dodge the red 'Roast Fails'. Survive for 30 seconds!
+        <p className="text-neon-green text-sm font-glitch mt-2">
+          &lt; Use Left/Right Arrow keys to dodge the traps. Survive for 30 seconds! &gt;
         </p>
       </div>
     </div>
