@@ -1,6 +1,10 @@
+
 import { clearCanvas, drawGameOver } from './game/renderer';
 import { drawPlayer } from './game/player';
 import { drawObstacles } from './game/obstacles';
+import { createPlayer, updatePlayer } from './game/player';
+import { spawnObstacle, updateObstacles, checkCollisions } from './game/obstacles';
+import { GAME, OBSTACLE } from './game/constants';
 
 export function startGame(
   canvas: HTMLCanvasElement,
@@ -19,22 +23,65 @@ export function startGame(
   }
 
   let animationFrameId: number | null = null;
+  const keysPressed: Record<string, boolean> = {};
+  const startTime = Date.now();
+  let lastObstacleSpawnTime = Date.now();
   
-  // Simple game state for this module
-  let gameState = {
-    player: { x: canvas.width / 2 - 15, y: canvas.height - 40, width: 30, height: 30, dx: 0 },
-    obstacles: [] as { x: number, y: number, width: number, height: number, speed: number }[],
+  // Game state for this module
+  const gameState = {
+    player: createPlayer(canvas.width, canvas.height),
+    obstacles: [] as ReturnType<typeof spawnObstacle>[],
     score: 0,
     gameOver: false,
     gameWon: false
   };
   
+  // Track keyboard input
+  const handleKeyDown = (event: KeyboardEvent) => {
+    keysPressed[event.key] = true;
+  };
+
+  const handleKeyUp = (event: KeyboardEvent) => {
+    keysPressed[event.key] = false;
+  };
+
+  window.addEventListener('keydown', handleKeyDown);
+  window.addEventListener('keyup', handleKeyUp);
+  
   // Internal update function for this module
   function updateInternalGameState() {
-    // Very simple update logic just to keep the game running
-    // The actual game state is maintained by useGameLoop hook
+    if (gameState.gameOver) {
+      return false;
+    }
+
+    // Update player
+    updatePlayer(gameState.player, keysPressed, canvas.width);
+
+    // Handle obstacles
+    const currentTime = Date.now();
+    if (currentTime - lastObstacleSpawnTime > OBSTACLE.SPAWN_RATE) {
+      gameState.obstacles.push(spawnObstacle(canvas.width));
+      lastObstacleSpawnTime = currentTime;
+    }
     
-    // Return true if game is still running, false if game over
+    gameState.obstacles = updateObstacles(gameState.obstacles, canvas.height);
+
+    // Check collisions
+    if (checkCollisions(gameState.player, gameState.obstacles)) {
+      gameState.gameOver = true;
+      gameState.gameWon = false;
+    }
+
+    // Update score and check win condition
+    const elapsedTimeSeconds = Math.floor((currentTime - startTime) / 1000);
+    gameState.score = elapsedTimeSeconds;
+    onScoreUpdate(gameState.score, GAME.WIN_TIME_SECONDS - elapsedTimeSeconds);
+
+    if (!gameState.gameOver && elapsedTimeSeconds >= GAME.WIN_TIME_SECONDS) {
+      gameState.gameWon = true;
+      gameState.gameOver = true;
+    }
+    
     return !gameState.gameOver;
   }
 
@@ -59,6 +106,8 @@ export function startGame(
     if (animationFrameId) {
       cancelAnimationFrame(animationFrameId);
     }
+    window.removeEventListener('keydown', handleKeyDown);
+    window.removeEventListener('keyup', handleKeyUp);
   }
 
   // Start the game loop
