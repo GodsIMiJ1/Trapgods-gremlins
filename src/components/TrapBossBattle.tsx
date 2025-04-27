@@ -1,5 +1,7 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
+import { Textarea } from "@/components/ui/textarea";
+import OpenAIKeyInput from './OpenAIKeyInput';
+import { OpenAIService } from '../services/openai';
 
 // Constants
 const BOSS_NAME = "Lil' Lil'";
@@ -56,30 +58,42 @@ interface TrapBossBattleProps {
 const TrapBossBattle: React.FC<TrapBossBattleProps> = ({ onFinishGame }) => {
   const [currentRound, setCurrentRound] = useState(0);
   const [bossRoast, setBossRoast] = useState('');
-  const [playerOptions, setPlayerOptions] = useState<PlayerResponse[]>([]);
+  const [playerResponse, setPlayerResponse] = useState('');
   const [playerScore, setPlayerScore] = useState(0);
   const [gameStatus, setGameStatus] = useState<GameStatus>('idle');
   const [roundResult, setRoundResult] = useState<string | null>(null);
   const [finalOutcome, setFinalOutcome] = useState<'win' | 'lose' | null>(null);
+  const [openAIService, setOpenAIService] = useState<OpenAIService | null>(null);
 
-  const generateRoundData = useCallback(() => {
+  const generateRoundData = useCallback(async () => {
+    if (!openAIService) return;
+    
     console.log(`Generating data for round ${currentRound}`);
-    const randomBossRoast = BOSS_ROASTS[Math.floor(Math.random() * BOSS_ROASTS.length)];
     setBossRoast("...");
-
-    const shuffledOptions = shuffleArray(ALL_PLAYER_RESPONSES);
-    const currentOptions = shuffledOptions.slice(0, 3);
-
-    const thinkingTimeout = setTimeout(() => {
-      setBossRoast(randomBossRoast);
-      setPlayerOptions(currentOptions);
+    
+    try {
+      const newRoast = await openAIService.generateRoast();
+      setBossRoast(newRoast);
       setGameStatus('playerTurn');
       setRoundResult(null);
       console.log("Boss roast delivered, player's turn.");
-    }, 1800);
+    } catch (error) {
+      console.error('Error generating roast:', error);
+      setBossRoast("Your code's so buggy, even console.log gave up!");
+      setGameStatus('playerTurn');
+    }
+  }, [currentRound, openAIService]);
 
-    return () => clearTimeout(thinkingTimeout);
-  }, [currentRound]);
+  const handlePlayerResponse = async () => {
+    if (!openAIService || !playerResponse.trim()) return;
+
+    const quality = await openAIService.evaluateResponse(playerResponse);
+    const scoreDelta = RESPONSE_SCORES[quality];
+    setPlayerScore(prevScore => prevScore + scoreDelta);
+    setRoundResult(RESPONSE_INDICATORS[quality]);
+    setGameStatus('roundEnd');
+    setPlayerResponse('');
+  };
 
   const startGame = () => {
     console.log("Starting new battle...");
@@ -87,18 +101,12 @@ const TrapBossBattle: React.FC<TrapBossBattleProps> = ({ onFinishGame }) => {
     setPlayerScore(0);
     setFinalOutcome(null);
     setRoundResult(null);
-    setPlayerOptions([]);
     setGameStatus('bossTurn');
   };
 
-  const handlePlayerChoice = (chosenResponse: PlayerResponse) => {
-    if (gameStatus !== 'playerTurn') return;
-
-    console.log(`Player chose: "${chosenResponse.text}" (Quality: ${chosenResponse.quality})`);
-    const scoreDelta = RESPONSE_SCORES[chosenResponse.quality];
-    setPlayerScore(prevScore => prevScore + scoreDelta);
-    setRoundResult(RESPONSE_INDICATORS[chosenResponse.quality]);
-    setGameStatus('roundEnd');
+  const handleApiKeySubmit = (apiKey: string) => {
+    setOpenAIService(new OpenAIService(apiKey));
+    startGame();
   };
 
   useEffect(() => {
@@ -130,6 +138,14 @@ const TrapBossBattle: React.FC<TrapBossBattleProps> = ({ onFinishGame }) => {
   }, [gameStatus, currentRound, playerScore]);
 
   const renderContent = () => {
+    if (!openAIService) {
+      return (
+        <div className="text-center">
+          <OpenAIKeyInput onSubmit={handleApiKeySubmit} />
+        </div>
+      );
+    }
+
     switch (gameStatus) {
       case 'idle':
         return (
@@ -163,20 +179,22 @@ const TrapBossBattle: React.FC<TrapBossBattleProps> = ({ onFinishGame }) => {
               </div>
             </div>
 
-            {gameStatus !== 'bossTurn' && (
-              <div className="space-y-3">
-                {playerOptions.map((option, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handlePlayerChoice(option)}
-                    disabled={gameStatus !== 'playerTurn'}
-                    className="w-full text-left bg-background/50 hover:bg-background/70 disabled:opacity-50 
-                             disabled:cursor-not-allowed p-4 rounded-lg border border-neon-purple/30 
-                             transition-all hover:scale-[1.02] text-neon-green"
-                  >
-                    {option.text}
-                  </button>
-                ))}
+            {gameStatus === 'playerTurn' && (
+              <div className="space-y-2">
+                <Textarea
+                  value={playerResponse}
+                  onChange={(e) => setPlayerResponse(e.target.value)}
+                  placeholder="Type your response..."
+                  className="w-full bg-background/50 border-neon-purple/30"
+                />
+                <button
+                  onClick={handlePlayerResponse}
+                  disabled={!playerResponse.trim()}
+                  className="w-full bg-neon-purple hover:bg-neon-purple/80 disabled:opacity-50 
+                           disabled:cursor-not-allowed text-white font-pixel px-8 py-4 rounded-lg transition-colors"
+                >
+                  Drop That Beat
+                </button>
               </div>
             )}
 
