@@ -5,13 +5,22 @@ import { TOTAL_ROUNDS } from './types';
 interface GameStatusProps {
   currentRound: number;
   playerScore: number;
+  energy?: number;
+  maxEnergy?: number;
 }
 
-const GameStatus: React.FC<GameStatusProps> = ({ currentRound, playerScore }) => {
+const GameStatus: React.FC<GameStatusProps> = ({ currentRound, playerScore, energy, maxEnergy }) => {
   return (
-    <p className="text-neon-green text-center">
-      Round: {currentRound} / {TOTAL_ROUNDS} | Score: {playerScore}
-    </p>
+    <div className="text-center space-y-1">
+      <p className="text-neon-green">
+        Round: {currentRound} / {TOTAL_ROUNDS} | Score: {playerScore}
+      </p>
+      {energy !== undefined && maxEnergy !== undefined && (
+        <p className="text-cyber-blue font-glitch text-sm">
+          🔥 Roasts Left Today: {energy}/{maxEnergy}
+        </p>
+      )}
+    </div>
   );
 };
 

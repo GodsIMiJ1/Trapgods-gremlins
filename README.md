@@ -50,6 +50,14 @@ Rare titles within the TrapGPT system
 TrapGPT is the savage AI system that powers all roasts inside this world.
 Built to be ruthless, hilarious, and unpredictable — TrapGPT is Lil' Lil's personal engine of chaos.
 
+Lil' Lil' has his own unique personality and catchphrases:
+- "JUUWRRAYYY!"
+- "izzzer naw..?"
+- "Look at em doe!"
+- "oooowwuhh!"
+
+His style is pure Gremlin slang with trap rap energy - hilarious, savage, and slightly unhinged.
+
 TrapGPT will also expand into:
 
 Standalone AI roast battles
@@ -61,8 +69,6 @@ Gremlin-themed battle arenas
 🎮 How to Play
 Launch the game.
 
-Enter a temporary OpenAI API key (demo purposes only).
-
 Fight through Gremlin Mayhem.
 
 Reach Lil' Lil' and face him in a custom roast battle.
@@ -71,17 +77,35 @@ Type your best comebacks — Lil' Lil' will react instantly!
 
 Win the crown and become a certified Trap Lord.
 
-🛠️ Tech Stack
-HTML / CSS / JavaScript
+Note: You can only battle the boss 3 times per day!
 
-OpenAI API (for real-time AI roast generation)
+🛠️ Tech Stack
+HTML / CSS / JavaScript / React
+
+Express.js backend with OpenAI API integration
+
+Energy system with localStorage persistence
 
 Deployed via Netlify
 
-⚠️ Demo Notes
-Players must input their own OpenAI API key temporarily for the demo.
+⚠️ Setup Notes
+1. Start the backend server:
+   ```
+   cd server
+   npm install
+   npm start
+   ```
 
-Future versions will feature built-in key management and secured accounts.
+2. Add your OpenAI API key to server/.env file:
+   ```
+   OPENAI_API_KEY=your-openai-key-here
+   ```
+
+3. Start the frontend:
+   ```
+   npm install
+   npm run dev
+   ```
 
 👑 Created By
 GodsIMiJ AI Solutions

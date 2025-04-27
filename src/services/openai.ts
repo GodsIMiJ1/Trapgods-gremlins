@@ -1,63 +1,58 @@
 
-import OpenAI from 'openai';
-
+// Updated to use backend API instead of direct OpenAI calls
 export class OpenAIService {
-  private openai: OpenAI;
+  private apiUrl: string;
 
-  constructor(apiKey: string) {
-    this.openai = new OpenAI({
-      apiKey,
-      dangerouslyAllowBrowser: true // Note: This is only for demo purposes
-    });
+  constructor(apiKey?: string) {
+    // We don't need the API key anymore since it's stored on the server
+    // But we keep the parameter for backward compatibility
+    this.apiUrl = 'http://localhost:3001/api'; // Update this to your production URL when deploying
   }
 
   async generateRoast(): Promise<string> {
     try {
-      const response = await this.openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [
-          {
-            role: "system",
-            content: "You are a friendly rap battle opponent. Generate a playful, family-friendly roast or diss that's creative and funny without being mean-spirited. Keep it short (max 2 lines) and witty."
-          },
-          {
-            role: "user",
-            content: "Generate a playful roast for a rap battle."
-          }
-        ],
-        temperature: 0.8,
-        max_tokens: 60
+      const response = await fetch(`${this.apiUrl}/roast`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: "Roast the player with your savage Gremlin style. Make it hilarious and include one of your catchphrases."
+        }),
       });
 
-      return response.choices[0]?.message?.content || "Your flow's so weak, it makes elevator music sound lit!";
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.roast || "Your flow's so weak, it makes elevator music sound lit! JUUWRRAYYY!";
     } catch (error) {
-      console.error('OpenAI API Error:', error);
-      return "Your flow's so weak, it makes elevator music sound lit!";
+      console.error('API Error:', error);
+      return "Your flow's so weak, it makes elevator music sound lit! Look at em doe!";
     }
   }
 
   async evaluateResponse(playerResponse: string): Promise<'good' | 'mid' | 'weak'> {
     try {
-      const response = await this.openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [
-          {
-            role: "system",
-            content: "You are judging rap battle responses. Rate the given response as either 'good', 'mid', or 'weak' based on creativity and wit. Respond with ONLY one of these three words."
-          },
-          {
-            role: "user",
-            content: `Rate this rap battle response: "${playerResponse}"`
-          }
-        ],
-        temperature: 0.3,
-        max_tokens: 10
+      const response = await fetch(`${this.apiUrl}/evaluate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          response: playerResponse
+        }),
       });
 
-      const rating = response.choices[0]?.message?.content?.toLowerCase().trim() as 'good' | 'mid' | 'weak';
-      return ['good', 'mid', 'weak'].includes(rating) ? rating : 'mid';
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.rating as 'good' | 'mid' | 'weak';
     } catch (error) {
-      console.error('OpenAI API Error:', error);
+      console.error('API Error:', error);
       return 'mid';
     }
   }
